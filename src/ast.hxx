@@ -69,7 +69,6 @@ struct Literal : RValue
 
 struct Var
 {
-	Var(Token::Stream &stream);
 	std::string name;
 	Type *type;
 	bool references;
@@ -78,14 +77,16 @@ struct Var
 
 struct VarRef : LValue, RValue
 {
-	Var *to_what;
+	std::pair<std::string, Var> *to_what;
 };
 
 struct Scope : Node
 {
-	void Generate(Token::Stream &stream);
 	std::vector<std::unique_ptr<Node>> nodes;
-	std::vector<Var> vars;
+	std::unordered_map<std::string, Var> vars;
+
+	void AddVar(Token::Stream &stream);
+
 	Scope *parent;
 };
 
@@ -93,13 +94,15 @@ struct Function : Scope
 {
 	std::string name;
 
-	Function(Token::Stream &stream);
+	std::vector<std::pair<const std::string, Var> *> args;
 };
 
-struct Root : Scope
+struct Root
 {
+	Scope content;
 	Root();
-	void Generate(Token::Stream &stream);
 };
+
+Root Generate(Token::Stream &stream);
 
 }; // namespace AST

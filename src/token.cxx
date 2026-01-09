@@ -16,6 +16,11 @@ void Stream::Rewind()
 	f.get(c);
 }
 
+void Stream::StreamIn(std::string &target)
+{
+	target = token;
+	NextToken();
+}
 const std::string &Stream::GetToken()
 {
 	return token;

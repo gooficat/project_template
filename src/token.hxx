@@ -15,6 +15,8 @@ struct Stream
 
 	bool NextIfMatch(const std::string &str);
 
+	void StreamIn(std::string &target);
+
 	void Rewind();
 
   private:

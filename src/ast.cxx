@@ -65,66 +65,67 @@ std::unordered_map<std::string, Type> Type::BuiltInTypes = {
 
 };
 
-Var::Var(Token::Stream &stream)
+void AddVar(Token::Stream &stream)
 {
-	this->constant = !stream.NextIfMatch("const");
-	this->references = stream.NextIfMatch("&");
-
-	this->name = stream.GetToken();
-	stream.NextToken();
-
+	Var var;
+	var.constant = stream.NextIfMatch("mut");
+	var.references = stream.NextIfMatch("&");
+	stream.StreamIn(var.name);
 	if (stream.NextIfMatch(":"))
 	{
-		this->type = &Type::BuiltInTypes.at(stream.GetToken());
+		var.type = &Type::BuiltInTypes.at(stream.GetToken());
 		stream.NextToken();
 	}
-
-	std::cout << (constant ? "Imm" : "M") << "utable of name " << name << " and type sized " << (int)type->size
-			  << ".\n";
+	else
+	{
+		var.type = nullptr;
+	}
+	stream.NextToken();
+	std::cout << "Added var of name " << var.name << " and type size " << int(var.type->size)
+			  << (var.constant ? "'constant var'\n" : "\n");
 }
 
-Function::Function(Token::Stream &stream)
+Scope GenScope(Token::Stream &stream)
 {
-	name = stream.GetToken();
+	Scope out;
+	std::cout << "Building scope\n";
 
 	stream.NextToken();
-	while (stream.GetToken() != ")")
-	{
-	}
 
-	Scope::Generate(stream);
-}
-
-void Scope::Generate(Token::Stream &stream)
-{
 	while (stream.GetToken().size())
 	{
-		// std::cout << stream.GetToken() << "\t";
+		std::cout << stream.GetToken() << "\n";
 
-		if (stream.NextIfMatch("let"))
+		if (stream.NextIfMatch("fn"))
 		{
-			vars.emplace_back(stream);
+			Function func;
+			stream.StreamIn(func.name);
+			std::cout << "Function named " << func.name << "\n";
+			stream.NextToken();
 		}
-		else if (stream.NextIfMatch("fn"))
+		else if (stream.NextIfMatch("let"))
 		{
-			nodes.emplace_back(new Function(stream));
+			AddVar(stream);
 		}
 
 		stream.NextToken();
 	}
+
+	return out;
 }
 
-void Root::Generate(Token::Stream &stream)
+Root Generate(Token::Stream &stream)
 {
-	std::cout << "Generating AST\n";
-	stream.NextToken();
+	Root root;
 
-	Scope::Generate(stream);
+	root.content = GenScope(stream);
+
+	return root;
 }
 
 Root::Root()
 {
-	parent = nullptr;
+	content.parent = nullptr;
 }
 
 } // namespace AST

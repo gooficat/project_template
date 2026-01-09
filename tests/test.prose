@@ -1,5 +1,8 @@
-main() {
-    let i : i64 = 6767;
+fn main 
+    mut argc : i32
+    mut argv& : u8
+{
+    let i : i32 = 6767;
     
     return i;
 }
