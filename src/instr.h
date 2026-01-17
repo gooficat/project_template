@@ -63,6 +63,7 @@ typedef enum
 	PRM_IMM = 1 << 3,
 	PRM_REL = 1 << 4,
 	PRM_ABS = 1 << 5,
+	// PRM_FIX = 1 << 6, // TODO fixed field special variants
 } ParamType;
 typedef enum
 {
@@ -73,17 +74,17 @@ typedef enum
 } ParamSize;
 typedef enum
 {
-	FLD_OPC,
-	FLD_REG,
-	FLD_RM,
-	FLD_DISP,
+	FLD_OPC,  // add to opcode
+	FLD_REG,  // reg field of modrmreg
+	FLD_RM,	  // rm field of modrmreg
+	FLD_DISP, // just in subsequent bytes
 } ParamField;
 
 typedef struct
 {
-	ParamType type : 5;
-	ParamSize size : 3;
-	ParamField field : 8;
+	ParamType type : 8;
+	ParamSize size : 4;
+	ParamField field : 4;
 } Param;
 
 typedef struct

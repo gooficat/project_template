@@ -12,16 +12,17 @@ typedef struct
 	bool global;
 } Label;
 
-typedef struct
+enum Pass
 {
-	FILE *f;
-	int C;
-} Stream;
+	PASS_LABEL,
+	PASS_ALIGN,
+	PASS_WRITE,
+};
 
 typedef struct
 {
-	Stream in;
-	FILE *out;
+	FILE *in, *out;
+	enum Pass pass;
 	char line[LINE_MAX];
 	char **s;
 	uint64_t offset;
