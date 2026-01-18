@@ -14,9 +14,9 @@ typedef struct
 
 enum Pass
 {
-	PASS_LABEL,
-	PASS_ALIGN,
-	PASS_WRITE,
+	PASS_LABEL = 0b01,
+	PASS_ALIGN = 0b10,
+	PASS_WRITE = 0b11,
 };
 
 typedef struct
@@ -24,6 +24,8 @@ typedef struct
 	FILE *in, *out;
 	enum Pass pass;
 	char line[LINE_MAX];
-	char **s;
+	char *s;
 	uint64_t offset;
 } Block;
+
+void WriteBytes(Block *b, const void *bytes, size_t n);

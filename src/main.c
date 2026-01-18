@@ -1,11 +1,27 @@
 #include "main.h"
 #include <stdio.h>
 
+void HandleDirective(Block *b)
+{
+	char tok[32];
+	int i;
+	sscanf_s(b->s, " .%s %n", tok, 32, &i);
+	b->s += i;
+	printf("%s %s\n", tok, b->s);
+
+	// for
+}
+
 void Pass(Block *b)
 {
 	while (fgets(b->line, LINE_MAX, b->in))
 	{
-		printf("%s", b->line);
+		b->s = &b->line[0];
+		// printf("%s", b->s);
+		if (*b->s == '.')
+		{
+			HandleDirective(b);
+		}
 	}
 }
 
@@ -27,4 +43,11 @@ void Assemble(const char *in_path, const char *out_path)
 int main(int argc, char *argv[])
 {
 	Assemble("C:/Users/User/Documents/cpp/poem/poem/test.ps", "C:/Users/User/Documents/cpp/poem/poem/test.bin");
+}
+
+void WriteBytes(Block *b, const void *bytes, size_t n)
+{
+	if (b->pass == PASS_WRITE)
+		fwrite(bytes, 1, n, b->out);
+	b->offset += n;
 }
